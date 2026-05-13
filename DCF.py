@@ -22,6 +22,7 @@ def financial_data(ticker):
 data = financial_data('MSFT')
 years = 5
 growth_rate = 0.02
+WACC = 0.05
 
 #forecasted FCF
 forecast_fcfs = []
@@ -39,11 +40,13 @@ for year, fcf in enumerate(forecast_fcfs, start=1):
 sum(discounted_fcfs)
 
 #Terminal Value calculation
-tv = forecast_fcfs[-1] * (1 + growth_rate) / (wacc - growth_rate)
+tv = forecast_fcfs[-1] * (1 + growth_rate) / (WACC - growth_rate)
 
 #Discount terminal value
-pv_tv = tv / (1 + wacc) ** years
+pv_tv = tv / (1 + WACC) ** years
 
 #Calculate enterprise value, equity value, share price
 enterprise_value = sum(discounted_fcfs) + pv_tv
-
+equity_value = enterprise_value - data['Debt'] + data['Cash']
+Share_price = equity_value / data['Shares']
+print(Share_price, equity_value, enterprise_value)
