@@ -20,11 +20,11 @@ def financial_data(ticker):
         'Shares': stock.info.get('sharesOutstanding'),
         'Stock Price': stock.info['regularMarketPrice']}
     return inputs
-
-data = financial_data('MSFT')
+company = 'MSFT'
+data = financial_data(company)
 #hardcoded values
 years = 5
-terminal_growth = 0.02
+terminal_growth = 0.025
 WACC = 0.05
 
 #estimate free cash flow growth rate from previous data
@@ -33,10 +33,6 @@ periods = len(valid_fcf) - 1
 start_fcf = valid_fcf.iloc[-1]
 end_fcf = valid_fcf.iloc[0]
 fcf_growth = (end_fcf / start_fcf) ** (1 / periods) - 1
-
-    
-
-
 
 #forecasted FCF
 forecast_fcfs = []
@@ -61,7 +57,14 @@ pv_tv = tv / (1 + WACC) ** years
 
 #Calculate enterprise value, equity value, share price
 enterprise_value = pv_fcf + pv_tv
+tv_weight = pv_tv / enterprise_value * 100
 equity_value = enterprise_value - data['Debt'] + data['Cash']
 Share_price = equity_value / data['Shares']
+upside = (Share_price / data['Stock Price'] - 1) * 100
+print(company)
 print(f"Current share price: {data['Stock Price']}")
 print(f'Estimated price: {Share_price}')
+print(f'Upside: {upside}')
+print(f'Market Cap: {data['Stock Price'] * data['Shares']}')
+print(f'TV% of EV: {tv_weight}')
+
