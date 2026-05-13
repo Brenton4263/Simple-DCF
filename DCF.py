@@ -16,18 +16,20 @@ def financial_data(ticker):
         'FCF': cf_stmt.loc['Free Cash Flow'].iloc[0], 
         'Debt': bal_sheet.loc['Total Debt'].iloc[0], 
         'Cash': bal_sheet.loc['Cash And Cash Equivalents'].iloc[0],
-        'Shares': stock.info.get('sharesOutstanding')}
+        'Shares': stock.info.get('sharesOutstanding'),
+        'Stock Price': stock.info['regularMarketPrice']}
     return inputs
 
-data = financial_data('MSFT')
+data = financial_data('AAPL')
 years = 5
-growth_rate = 0.02
+fcf_growth = 0.1
+terminal_growth = 0.02
 WACC = 0.05
 
 #forecasted FCF
 forecast_fcfs = []
 for year in range(1, years+1):
-    result = data['FCF'] * (1 + growth_rate) ** year
+    result = data['FCF'] * (1 + fcf_growth) ** year
     forecast_fcfs.append(result)
  
 # Discount FCF 
@@ -37,16 +39,17 @@ for year, fcf in enumerate(forecast_fcfs, start=1):
     discounted_fcfs.append(pv)
 
 # PV of cash flows
-sum(discounted_fcfs)
+pv_fcf = sum(discounted_fcfs)
 
 #Terminal Value calculation
-tv = forecast_fcfs[-1] * (1 + growth_rate) / (WACC - growth_rate)
+tv = forecast_fcfs[-1] * (1 + terminal_growth) / (WACC - terminal_growth)
 
 #Discount terminal value
 pv_tv = tv / (1 + WACC) ** years
 
 #Calculate enterprise value, equity value, share price
-enterprise_value = sum(discounted_fcfs) + pv_tv
+enterprise_value = pv_fcf + pv_tv
 equity_value = enterprise_value - data['Debt'] + data['Cash']
 Share_price = equity_value / data['Shares']
-print(Share_price, equity_value, enterprise_value)
+print(f"Current share price: {data['Stock Price']}")
+print(f'Estimated price: {Share_price}')
