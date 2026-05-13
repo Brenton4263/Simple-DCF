@@ -24,24 +24,26 @@ years = 5
 growth_rate = 0.02
 
 #forecasted FCF
-forecast_values = []
+forecast_fcfs = []
 for year in range(1, years+1):
     result = data['FCF'] * (1 + growth_rate) ** year
-    forecast_values.append(result)
+    forecast_fcfs.append(result)
  
 # Discount FCF 
-discounted_values = []
-for year, fcf in enumerate(forecast_values, start=1):
+discounted_fcfs = []
+for year, fcf in enumerate(forecast_fcfs, start=1):
     pv = fcf / (1+WACC) ** year
-    discounted_values.append(pv)
+    discounted_fcfs.append(pv)
 
 # PV of cash flows
-sum(discounted_values)
+sum(discounted_fcfs)
 
 #Terminal Value calculation
-tv = forecast_values[-1] * (1 + growth_rate) / (wacc - growth_rate)
+tv = forecast_fcfs[-1] * (1 + growth_rate) / (wacc - growth_rate)
 
 #Discount terminal value
 pv_tv = tv / (1 + wacc) ** years
 
+#Calculate enterprise value, equity value, share price
+enterprise_value = sum(discounted_fcfs) + pv_tv
 
