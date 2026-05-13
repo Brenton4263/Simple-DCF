@@ -20,28 +20,28 @@ def financial_data(ticker):
     return inputs
 
 data = financial_data('MSFT')
+years = 5
+growth_rate = 0.02
 
-
-def forecast_fcf(current_fcf, growth_rate, years):
-    forecast_values = []
-    for year in range(1, years+1):
-        result = current_fcf * (1 + growth_rate) ** year
-        forecast_values.append(result)
-    return forecast_values
-
-FCF_forecast = forecast_fcf(100,0.1,3)
-
-def Discount_fcfs(fcfs, WACC):
-    discounted_values = []
-    for year, fcf in enumerate(fcfs, start=1):
-        pv = fcf / (1+WACC) ** year
-        discounted_values.append(pv)
-    return discounted_values
+#forecasted FCF
+forecast_values = []
+for year in range(1, years+1):
+    result = data['FCF'] * (1 + growth_rate) ** year
+    forecast_values.append(result)
+ 
+# Discount FCF 
+discounted_values = []
+for year, fcf in enumerate(forecast_values, start=1):
+    pv = fcf / (1+WACC) ** year
+    discounted_values.append(pv)
 
 # PV of cash flows
-print(sum(Discount_fcfs(FCF_forecast, 0.1)))
+sum(discounted_values)
 
 #Terminal Value calculation
-def terminal_value(final_fcf, WACC< g):
-    tv = final_fcf * (1 + g) / (wacc - g)
-    return tv
+tv = forecast_values[-1] * (1 + growth_rate) / (wacc - growth_rate)
+
+#Discount terminal value
+pv_tv = tv / (1 + wacc) ** years
+
+
