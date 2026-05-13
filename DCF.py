@@ -37,4 +37,11 @@ def Discount_fcfs(fcfs, WACC):
         pv = fcf / (1+WACC) ** year
         discounted_values.append(pv)
     return discounted_values
-print(Discount_fcfs(FCF_forecast, 0.1))
+
+# PV of cash flows
+print(sum(Discount_fcfs(FCF_forecast, 0.1)))
+
+#Terminal Value calculation
+def terminal_value(final_fcf, WACC< g):
+    tv = final_fcf * (1 + g) / (wacc - g)
+    return tv
