@@ -14,17 +14,29 @@ def financial_data(ticker):
         'Revenue':inc_stmt.loc["Total Revenue"].iloc[0], 
         'EBIT': inc_stmt.loc['EBIT'].iloc[0], 
         'FCF': cf_stmt.loc['Free Cash Flow'].iloc[0], 
+        'FCF ALL': cf_stmt.loc['Free Cash Flow'],
         'Debt': bal_sheet.loc['Total Debt'].iloc[0], 
         'Cash': bal_sheet.loc['Cash And Cash Equivalents'].iloc[0],
         'Shares': stock.info.get('sharesOutstanding'),
         'Stock Price': stock.info['regularMarketPrice']}
     return inputs
 
-data = financial_data('AAPL')
+data = financial_data('MSFT')
+#hardcoded values
 years = 5
-fcf_growth = 0.1
 terminal_growth = 0.02
 WACC = 0.05
+
+#estimate free cash flow growth rate from previous data
+valid_fcf = data['FCF ALL'].dropna()
+periods = len(valid_fcf) - 1
+start_fcf = valid_fcf.iloc[-1]
+end_fcf = valid_fcf.iloc[0]
+fcf_growth = (end_fcf / start_fcf) ** (1 / periods) - 1
+
+    
+
+
 
 #forecasted FCF
 forecast_fcfs = []
